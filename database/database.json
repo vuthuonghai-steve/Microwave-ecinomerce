@@ -1,0 +1,579 @@
+{
+  "database_schema": [
+    {
+      "table_name": "brands",
+      "source_reference": "[1]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK, AUTO_INCREMENT"},
+        {"name": "name", "data_type": "VARCHAR(255)", "note": "Unique"},
+        {"name": "slug", "data_type": "VARCHAR(255)", "note": "Unique"},
+        {"name": "is_active", "data_type": "BOOLEAN", "note": "Mặc định true"},
+        {"name": "timestamps", "data_type": "TIMESTAMP", "note": "created_at, updated_at"}
+      ]
+    },
+    {
+      "table_name": "categories",
+      "source_reference": "[1]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK, AUTO_INCREMENT"},
+        {"name": "parent_id", "data_type": "BIGINT", "note": "FK → categories.id (nullable, SET NULL)"},
+        {"name": "name", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "slug", "data_type": "VARCHAR(255)", "note": "Unique"},
+        {"name": "is_active", "data_type": "BOOLEAN", "note": "Mặc định true"},
+        {"name": "timestamps", "data_type": "TIMESTAMP", "note": "created_at, updated_at"}
+      ]
+    },
+    {
+      "table_name": "products",
+      "source_reference": "[1]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK, AUTO_INCREMENT"},
+        {"name": "category_id", "data_type": "BIGINT", "note": "FK → categories.id (RESTRICT)"},
+        {"name": "brand_id", "data_type": "BIGINT", "note": "FK → brands.id (RESTRICT)"},
+        {"name": "name", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "slug", "data_type": "VARCHAR(255)", "note": "Unique"},
+        {"name": "price", "data_type": "DECIMAL(12,2)", "note": ""},
+        {"name": "sale_price", "data_type": "DECIMAL(12,2)", "note": "Nullable, CHECK: <= price"},
+        {"name": "capacity_liters", "data_type": "INT", "note": ""},
+        {"name": "power_watt", "data_type": "INT", "note": "Nullable"},
+        {"name": "has_grill", "data_type": "BOOLEAN", "note": "Mặc định false"},
+        {"name": "inverter", "data_type": "BOOLEAN", "note": ""},
+        {"name": "child_lock", "data_type": "BOOLEAN", "note": ""},
+        {"name": "energy_rating", "data_type": "TINYINT", "note": "Nullable"},
+        {"name": "warranty_months", "data_type": "INT", "note": ""},
+        {"name": "thumbnail", "data_type": "VARCHAR(255)", "note": "Nullable"},
+        {"name": "description", "data_type": "LONGTEXT", "note": "Nullable"},
+        {"name": "is_active", "data_type": "BOOLEAN", "note": "Mặc định true"},
+        {"name": "timestamps", "data_type": "TIMESTAMP", "note": "created_at, updated_at"}
+      ]
+    },
+    {
+      "table_name": "product_stocks",
+      "source_reference": "[2]",
+      "columns": [
+        {"name": "product_id", "data_type": "BIGINT", "note": "PK, FK → products.id"},
+        {"name": "stock_on_hand", "data_type": "INT UNSIGNED", "note": "Tổng tồn kho thực tế"},
+        {"name": "stock_reserved", "data_type": "INT UNSIGNED", "note": "Số lượng đã đặt chưa giao"}
+      ]
+    },
+    {
+      "table_name": "stock_movements",
+      "source_reference": "[2]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK, AUTO_INCREMENT"},
+        {"name": "product_id", "data_type": "BIGINT", "note": "FK → products.id"},
+        {"name": "type", "data_type": "ENUM", "note": "'in','out','reserve','release','sell','adjust'"},
+        {"name": "quantity", "data_type": "INT UNSIGNED", "note": "Số lượng"},
+        {"name": "order_id", "data_type": "BIGINT", "note": "FK → orders.id, nullable"},
+        {"name": "note", "data_type": "VARCHAR(255)", "note": "Ghi chú"},
+        {"name": "created_at", "data_type": "TIMESTAMP", "note": "Thời điểm ghi nhận"}
+      ]
+    },
+    {
+      "table_name": "product_statistics",
+      "source_reference": "[2]",
+      "columns": [
+        {"name": "product_id", "data_type": "BIGINT", "note": "PK, FK → products.id"},
+        {"name": "total_sold", "data_type": "BIGINT UNSIGNED", "note": "Tổng số lượng đã bán"},
+        {"name": "average_rating", "data_type": "DECIMAL(3,2)", "note": "Điểm trung bình đánh giá"},
+        {"name": "reviews_count", "data_type": "INT UNSIGNED", "note": "Số lượt đánh giá"}
+      ]
+    },
+    {
+      "table_name": "users",
+      "source_reference": "[3]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "name", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "email", "data_type": "VARCHAR(255)", "note": "Unique"},
+        {"name": "password", "data_type": "VARCHAR(255)", "note": "Mã hóa"},
+        {"name": "role", "data_type": "ENUM", "note": "'CUSTOMER', 'ADMIN'"},
+        {"name": "email_verified_at", "data_type": "TIMESTAMP", "note": "Nullable"},
+        {"name": "timestamps", "data_type": "TIMESTAMP", "note": "created_at, updated_at"}
+      ]
+    },
+    {
+      "table_name": "addresses",
+      "source_reference": "[3]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "full_name", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "phone", "data_type": "VARCHAR(20)", "note": ""},
+        {"name": "line1", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "district", "data_type": "VARCHAR(100)", "note": ""},
+        {"name": "city", "data_type": "VARCHAR(100)", "note": ""},
+        {"name": "country_code", "data_type": "CHAR(2)", "note": "Mặc định 'VN'"},
+        {"name": "is_default", "data_type": "BOOLEAN", "note": ""}
+      ]
+    },
+    {
+      "table_name": "orders",
+      "source_reference": "[3]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK, AUTO_INCREMENT"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "code", "data_type": "VARCHAR(20)", "note": "Mã đơn duy nhất"},
+        {"name": "status", "data_type": "ENUM", "note": "'pending','processing','packed','shipping','delivered','cancelled'"},
+        {"name": "payment_status", "data_type": "ENUM", "note": "'unpaid','paid'"},
+        {"name": "payment_method", "data_type": "ENUM", "note": "'cod'"},
+        {"name": "subtotal", "data_type": "DECIMAL(12,2)", "note": ""},
+        {"name": "discount_total", "data_type": "DECIMAL(12,2)", "note": ""},
+        {"name": "shipping_fee", "data_type": "DECIMAL(12,2)", "note": ""},
+        {"name": "grand_total", "data_type": "DECIMAL(12,2)", "note": ""},
+        {"name": "shipping_address_id", "data_type": "BIGINT", "note": "FK → addresses.id"},
+        {"name": "notes", "data_type": "TEXT", "note": "Ghi chú đơn hàng"},
+        {"name": "timestamps", "data_type": "TIMESTAMP", "note": "placed_at, paid_at, delivered_at, created_at"}
+      ]
+    },
+    {
+      "table_name": "order_items",
+      "source_reference": "[4]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK, AUTO_INCREMENT"},
+        {"name": "order_id", "data_type": "BIGINT", "note": "FK → orders.id"},
+        {"name": "product_id", "data_type": "BIGINT", "note": "FK → products.id"},
+        {"name": "name_snapshot", "data_type": "VARCHAR(255)", "note": "Tên sản phẩm tại thời điểm đặt hàng"},
+        {"name": "price_snapshot", "data_type": "DECIMAL(12,2)", "note": "Giá tại thời điểm đặt hàng"},
+        {"name": "quantity", "data_type": "INT", "note": ""},
+        {"name": "total", "data_type": "DECIMAL(12,2)", "note": "Tổng tiền cho mục này"}
+      ]
+    },
+    {
+      "table_name": "product_reviews",
+      "source_reference": "[4]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK, AUTO_INCREMENT"},
+        {"name": "order_item_id", "data_type": "BIGINT", "note": "FK → order_items.id, UNIQUE"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "product_id", "data_type": "BIGINT", "note": "FK → products.id"},
+        {"name": "rating", "data_type": "TINYINT", "note": "1–5 sao"},
+        {"name": "comment", "data_type": "TEXT", "note": "Bình luận"},
+        {"name": "created_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "carts",
+      "source_reference": "[5]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "status", "data_type": "ENUM", "note": "'active', 'converted', 'abandoned'"},
+        {"name": "timestamps", "data_type": "TIMESTAMP", "note": "created_at"}
+      ]
+    },
+    {
+      "table_name": "cart_items",
+      "source_reference": "[5]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "cart_id", "data_type": "BIGINT", "note": "FK → carts.id"},
+        {"name": "product_id", "data_type": "BIGINT", "note": "FK → products.id"},
+        {"name": "price_snapshot", "data_type": "DECIMAL(12,2)", "note": "Giá snapshot"},
+        {"name": "quantity", "data_type": "INT", "note": "Số lượng"}
+      ]
+    },
+    {
+      "table_name": "payments",
+      "source_reference": "[5]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "order_id", "data_type": "BIGINT", "note": "FK → orders.id, UNIQUE"},
+        {"name": "provider", "data_type": "ENUM", "note": "'cod'"},
+        {"name": "amount", "data_type": "DECIMAL(12,2)", "note": ""},
+        {"name": "txn_code", "data_type": "VARCHAR(255)", "note": "Nullable"},
+        {"name": "status", "data_type": "ENUM", "note": "'initiated','succeeded','failed'"},
+        {"name": "paid_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "vouchers",
+      "source_reference": "[7]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK, AUTO_INCREMENT"},
+        {"name": "code", "data_type": "VARCHAR(50)", "note": "Unique, UPPERCASE"},
+        {"name": "type", "data_type": "ENUM('PERCENT','FIXED')", "note": "Loại giảm giá"},
+        {"name": "value", "data_type": "DECIMAL(12,2)", "note": "% (0–100) hoặc số tiền"},
+        {"name": "max_discount", "data_type": "DECIMAL(12,2)", "note": "Nullable, trần giảm"},
+        {"name": "min_order_total", "data_type": "DECIMAL(12,2)", "note": "Nullable, điều kiện áp dụng"},
+        {"name": "start_at", "data_type": "TIMESTAMP", "note": ""},
+        {"name": "end_at", "data_type": "TIMESTAMP", "note": ""},
+        {"name": "usage_limit", "data_type": "INT", "note": "Tổng số lượt sử dụng"},
+        {"name": "used_count", "data_type": "INT", "note": "Đã dùng"},
+        {"name": "per_user_limit", "data_type": "INT", "note": "Mặc định 1"},
+        {"name": "is_active", "data_type": "BOOLEAN", "note": ""},
+        {"name": "created_at/updated_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "voucher_usages",
+      "source_reference": "[7]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "voucher_id", "data_type": "BIGINT", "note": "FK → vouchers.id"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "order_id", "data_type": "BIGINT", "note": "FK → orders.id, nullable"},
+        {"name": "status", "data_type": "ENUM('reserved','consumed','released')", "note": ""},
+        {"name": "used_at", "data_type": "TIMESTAMP", "note": "Nullable"},
+        {"name": "created_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "promotions",
+      "source_reference": "[7]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "name", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "description", "data_type": "TEXT", "note": ""},
+        {"name": "scope", "data_type": "ENUM('ALL','CATEGORY','PRODUCT')", "note": "Phạm vi áp dụng"},
+        {"name": "payload", "data_type": "JSON", "note": "Danh sách id/điều kiện"},
+        {"name": "start_at/end_at", "data_type": "TIMESTAMP", "note": ""},
+        {"name": "is_active", "data_type": "BOOLEAN", "note": ""},
+        {"name": "created_at/updated_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "loyalty_tiers",
+      "source_reference": "[8]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "name", "data_type": "VARCHAR(100)", "note": "Hạng (Silver/Gold/Platinum)"},
+        {"name": "min_points", "data_type": "INT", "note": "Ngưỡng lên hạng"},
+        {"name": "benefits", "data_type": "JSON", "note": "Mô tả quyền lợi"}
+      ]
+    },
+    {
+      "table_name": "user_loyalty",
+      "source_reference": "[8]",
+      "columns": [
+        {"name": "user_id", "data_type": "BIGINT", "note": "PK, FK → users.id"},
+        {"name": "points_balance", "data_type": "INT", "note": "Số điểm hiện tại"},
+        {"name": "tier_id", "data_type": "BIGINT", "note": "FK → loyalty_tiers.id"},
+        {"name": "updated_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "loyalty_transactions",
+      "source_reference": "[8]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "type", "data_type": "ENUM('earn','spend','expire','adjust')", "note": ""},
+        {"name": "points", "data_type": "INT", "note": "+/-"},
+        {"name": "order_id", "data_type": "BIGINT", "note": "FK → orders.id, nullable"},
+        {"name": "note", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "created_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "wishlists",
+      "source_reference": "[9]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "created_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "wishlist_items",
+      "source_reference": "[9]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "wishlist_id", "data_type": "BIGINT", "note": "FK → wishlists.id"},
+        {"name": "product_id", "data_type": "BIGINT", "note": "FK → products.id"},
+        {"name": "created_at", "data_type": "TIMESTAMP", "note": "UNIQUE (wishlist_id, product_id)"}
+      ]
+    },
+    {
+      "table_name": "carriers",
+      "source_reference": "[10]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "code", "data_type": "VARCHAR(50)", "note": "Unique (ghn, ghtk, vnpost…)"},
+        {"name": "name", "data_type": "VARCHAR(100)", "note": ""},
+        {"name": "config", "data_type": "JSON", "note": "Endpoint, service codes (không chứa secret)"},
+        {"name": "is_active", "data_type": "BOOLEAN", "note": ""}
+      ]
+    },
+    {
+      "table_name": "shipments",
+      "source_reference": "[10]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "order_id", "data_type": "BIGINT", "note": "FK → orders.id, UNIQUE"},
+        {"name": "carrier_id", "data_type": "BIGINT", "note": "FK → carriers.id"},
+        {"name": "tracking_code", "data_type": "VARCHAR(100)", "note": ""},
+        {"name": "status", "data_type": "ENUM", "note": "'requested','ready','picking','in_transit','delivered','failed','returned'"},
+        {"name": "fee", "data_type": "DECIMAL(12,2)", "note": "Nullable"},
+        {"name": "label_url", "data_type": "VARCHAR(255)", "note": "Nullable"},
+        {"name": "estimated_delivery_date", "data_type": "DATE", "note": "Nullable"},
+        {"name": "shipped_at", "data_type": "TIMESTAMP", "note": "Nullable"},
+        {"name": "delivered_at", "data_type": "TIMESTAMP", "note": "Nullable"},
+        {"name": "raw_payload", "data_type": "JSON", "note": "Payload trả về từ hãng"},
+        {"name": "created_at/updated_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "shipment_events",
+      "source_reference": "[11]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "shipment_id", "data_type": "BIGINT", "note": "FK → shipments.id"},
+        {"name": "status", "data_type": "VARCHAR(50)", "note": "Mã sự kiện từ carrier"},
+        {"name": "message", "data_type": "VARCHAR(255)", "note": "Mô tả"},
+        {"name": "occurred_at", "data_type": "TIMESTAMP", "note": "Thời điểm sự kiện"},
+        {"name": "raw", "data_type": "JSON", "note": "Dữ liệu thô"}
+      ]
+    },
+    {
+      "table_name": "webhooks_config",
+      "source_reference": "[11]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "provider", "data_type": "VARCHAR(50)", "note": "ghn/ghtk/vnpay/momo"},
+        {"name": "topic", "data_type": "VARCHAR(100)", "note": ""},
+        {"name": "secret_hash", "data_type": "VARCHAR(255)", "note": "Dùng verify HMAC"},
+        {"name": "is_active", "data_type": "BOOLEAN", "note": ""},
+        {"name": "created_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "webhook_logs",
+      "source_reference": "[11]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "webhook_id", "data_type": "BIGINT", "note": "FK → webhooks.id"},
+        {"name": "request_id", "data_type": "VARCHAR(100)", "note": "Idempotency"},
+        {"name": "status_code", "data_type": "INT", "note": ""},
+        {"name": "received_at", "data_type": "TIMESTAMP", "note": ""},
+        {"name": "payload", "data_type": "JSON", "note": ""},
+        {"name": "processed_at", "data_type": "TIMESTAMP", "note": ""},
+        {"name": "error_message", "data_type": "VARCHAR(255)", "note": "Nullable"}
+      ]
+    },
+    {
+      "table_name": "payment_transactions",
+      "source_reference": "[12]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "payment_id", "data_type": "BIGINT", "note": "FK → payments.id"},
+        {"name": "gateway", "data_type": "ENUM('vnpay','momo','cod')", "note": ""},
+        {"name": "txn_ref", "data_type": "VARCHAR(100)", "note": "Mã tham chiếu gateway"},
+        {"name": "amount", "data_type": "DECIMAL(12,2)", "note": ""},
+        {"name": "status", "data_type": "ENUM('initiated','redirected','succeeded','failed','refunded')", "note": ""},
+        {"name": "response_code", "data_type": "VARCHAR(50)", "note": "Mã phản hồi"},
+        {"name": "message", "data_type": "VARCHAR(255)", "note": "Mô tả ngắn"},
+        {"name": "raw_request", "data_type": "JSON", "note": ""},
+        {"name": "raw_response", "data_type": "JSON", "note": ""},
+        {"name": "created_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "refunds",
+      "source_reference": "[12]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "order_id", "data_type": "BIGINT", "note": "FK → orders.id"},
+        {"name": "payment_id", "data_type": "BIGINT", "note": "FK → payments.id, nullable"},
+        {"name": "code", "data_type": "VARCHAR(30)", "note": "Unique"},
+        {"name": "status", "data_type": "ENUM('requested','approved','rejected','processing','completed')", "note": ""},
+        {"name": "amount", "data_type": "DECIMAL(12,2)", "note": "Tổng tiền hoàn"},
+        {"name": "reason", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "approved_by", "data_type": "BIGINT", "note": "FK → users.id (admin), nullable"},
+        {"name": "requested_at", "data_type": "TIMESTAMP", "note": ""},
+        {"name": "processed_at", "data_type": "TIMESTAMP", "note": "Nullable"}
+      ]
+    },
+    {
+      "table_name": "refund_items",
+      "source_reference": "[13]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "refund_id", "data_type": "BIGINT", "note": "FK → refunds.id"},
+        {"name": "order_item_id", "data_type": "BIGINT", "note": "FK → order_items.id"},
+        {"name": "quantity", "data_type": "INT", "note": "Số lượng hoàn"},
+        {"name": "amount", "data_type": "DECIMAL(12,2)", "note": "Tiền hoàn mục này"}
+      ]
+    },
+    {
+      "table_name": "refund_process_logs",
+      "source_reference": "[13]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "refund_id", "data_type": "BIGINT", "note": "FK → refunds.id"},
+        {"name": "status", "data_type": "VARCHAR(50)", "note": "Trạng thái tiến trình"},
+        {"name": "note", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "created_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "pages",
+      "source_reference": "[13]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "slug", "data_type": "VARCHAR(150)", "note": "Unique"},
+        {"name": "title", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "content", "data_type": "LONGTEXT", "note": ""},
+        {"name": "meta", "data_type": "JSON", "note": "SEO, OG"},
+        {"name": "is_published", "data_type": "BOOLEAN", "note": ""},
+        {"name": "published_at", "data_type": "TIMESTAMP", "note": "Nullable"},
+        {"name": "created_at/updated_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "posts",
+      "source_reference": "[13]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "author_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "title", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "slug", "data_type": "VARCHAR(150)", "note": "Unique"},
+        {"name": "excerpt", "data_type": "TEXT", "note": "Nullable"},
+        {"name": "content", "data_type": "LONGTEXT", "note": ""},
+        {"name": "is_published", "data_type": "BOOLEAN", "note": ""},
+        {"name": "published_at", "data_type": "TIMESTAMP", "note": "Nullable"},
+        {"name": "created_at/updated_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "post_categories",
+      "source_reference": "[14]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "name", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "slug", "data_type": "VARCHAR(255)", "note": "Unique"}
+      ]
+    },
+    {
+      "table_name": "post_category_post",
+      "source_reference": "[14]",
+      "columns": [
+        {"name": "post_id", "data_type": "BIGINT", "note": "FK → posts.id, Composite PK"},
+        {"name": "category_id", "data_type": "BIGINT", "note": "FK → post_categories.id, Composite PK"}
+      ]
+    },
+    {
+      "table_name": "post_tags",
+      "source_reference": "[14]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "name", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "slug", "data_type": "VARCHAR(255)", "note": "Unique"}
+      ]
+    },
+    {
+      "table_name": "post_post_tag",
+      "source_reference": "[14]",
+      "columns": [
+        {"name": "post_id", "data_type": "BIGINT", "note": "FK → posts.id, Composite PK"},
+        {"name": "tag_id", "data_type": "BIGINT", "note": "FK → post_tags.id, Composite PK"}
+      ]
+    },
+    {
+      "table_name": "notification_templates",
+      "source_reference": "[14]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "key", "data_type": "VARCHAR(100)", "note": "Unique (order_placed, order_shipped...)"},
+        {"name": "channel", "data_type": "ENUM('email','sms','push','inapp')", "note": ""},
+        {"name": "subject", "data_type": "VARCHAR(255)", "note": "Nullable cho non-email"},
+        {"name": "body", "data_type": "LONGTEXT", "note": "Nội dung template"},
+        {"name": "is_active", "data_type": "BOOLEAN", "note": ""}
+      ]
+    },
+    {
+      "table_name": "notification_logs",
+      "source_reference": "[15]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id, nullable"},
+        {"name": "channel", "data_type": "ENUM('email','sms','push','inapp')", "note": ""},
+        {"name": "template_key", "data_type": "VARCHAR(100)", "note": ""},
+        {"name": "to_address", "data_type": "VARCHAR(255)", "note": "email/số điện thoại/endpoint"},
+        {"name": "subject", "data_type": "VARCHAR(255)", "note": "Snapshot"},
+        {"name": "body_snapshot", "data_type": "LONGTEXT", "note": "Snapshot"},
+        {"name": "status", "data_type": "ENUM('queued','sent','failed')", "note": ""},
+        {"name": "sent_at", "data_type": "TIMESTAMP", "note": "Nullable"},
+        {"name": "error_message", "data_type": "VARCHAR(255)", "note": "Nullable"}
+      ]
+    },
+    {
+      "table_name": "tickets",
+      "source_reference": "[15]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "order_id", "data_type": "BIGINT", "note": "FK → orders.id, nullable"},
+        {"name": "subject", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "status", "data_type": "ENUM('open','pending','resolved','closed')", "note": ""},
+        {"name": "priority", "data_type": "ENUM('low','normal','high','urgent')", "note": ""},
+        {"name": "assigned_to", "data_type": "BIGINT", "note": "FK → users.id (admin), nullable"},
+        {"name": "created_at/updated_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "ticket_messages",
+      "source_reference": "[16]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "ticket_id", "data_type": "BIGINT", "note": "FK → tickets.id"},
+        {"name": "sender_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "message", "data_type": "LONGTEXT", "note": ""},
+        {"name": "created_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "ticket_attachments",
+      "source_reference": "[16]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "ticket_message_id", "data_type": "BIGINT", "note": "FK → ticket_messages.id"},
+        {"name": "path", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "filename", "data_type": "VARCHAR(255)", "note": ""},
+        {"name": "mime", "data_type": "VARCHAR(100)", "note": ""},
+        {"name": "size", "data_type": "INT", "note": "bytes"}
+      ]
+    },
+    {
+      "table_name": "user_events",
+      "source_reference": "[16]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id, nullable"},
+        {"name": "session_id", "data_type": "VARCHAR(64)", "note": ""},
+        {"name": "event", "data_type": "ENUM('view','search','add_to_cart','checkout','purchase')", "note": ""},
+        {"name": "product_id", "data_type": "BIGINT", "note": "FK → products.id, nullable"},
+        {"name": "order_id", "data_type": "BIGINT", "note": "FK → orders.id, nullable"},
+        {"name": "metadata", "data_type": "JSON", "note": "từ khóa, giá, nguồn…"},
+        {"name": "occurred_at", "data_type": "TIMESTAMP", "note": ""}
+      ]
+    },
+    {
+      "table_name": "product_daily_stats",
+      "source_reference": "[17]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "date", "data_type": "DATE", "note": ""},
+        {"name": "product_id", "data_type": "BIGINT", "note": "FK → products.id"},
+        {"name": "views", "data_type": "INT", "note": ""},
+        {"name": "add_to_carts", "data_type": "INT", "note": ""},
+        {"name": "purchases", "data_type": "INT", "note": ""},
+        {"name": "UNIQUE", "data_type": "(date, product_id)", "note": ""}
+      ]
+    },
+    {
+      "table_name": "user_recommendations",
+      "source_reference": "[17]",
+      "columns": [
+        {"name": "id", "data_type": "BIGINT", "note": "PK"},
+        {"name": "user_id", "data_type": "BIGINT", "note": "FK → users.id"},
+        {"name": "product_id", "data_type": "BIGINT", "note": "FK → products.id"},
+        {"name": "score", "data_type": "DECIMAL(5,2)", "note": "0–1 hoặc 0–100"},
+        {"name": "reason", "data_type": "JSON", "note": "Nguồn gợi ý (collab/content-based)"},
+        {"name": "generated_at", "data_type": "TIMESTAMP", "note": ""},
+        {"name": "expires_at", "data_type": "TIMESTAMP", "note": "Nullable"},
+        {"name": "UNIQUE", "data_type": "(user_id, product_id)", "note": ""}
+      ]
+    }
+  ]
+}

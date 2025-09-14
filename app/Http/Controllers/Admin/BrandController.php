@@ -11,8 +11,22 @@ class BrandController extends Controller
 {
     public function index()
     {
-        $brands = Brand::latest()->paginate(20);
-        return view('admin.brands.index', compact('brands'));
+        $q = request()->string('q')->toString();
+        $query = Brand::query()
+            ->withCount('products')
+            ->withSum(['products as sold_qty' => function($q){
+                $q->join('order_items','order_items.product_id','=','products.id')
+                  ->join('orders','orders.id','=','order_items.order_id')
+                  ->where('orders.status','delivered');
+            }], 'order_items.quantity');
+        if ($q) {
+            $query->where(function($b) use ($q){
+                $b->where('name','like',"%$q%")
+                  ->orWhere('slug','like',"%$q%");
+            });
+        }
+        $brands = $query->latest()->paginate(20)->appends(request()->query());
+        return view('admin.brands.index', compact('brands','q'));
     }
 
     public function create()
@@ -50,4 +64,3 @@ class BrandController extends Controller
         return redirect()->route('admin.brands.index')->with('status', 'Brand deleted');
     }
 }
-

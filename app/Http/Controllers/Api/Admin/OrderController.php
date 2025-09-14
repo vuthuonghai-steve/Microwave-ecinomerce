@@ -11,7 +11,9 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $q = Order::query()->with(['user:id,name,email', 'items', 'shippingAddress']);
+        $q = Order::query()->with(['user:id,name,email', 'items', 'shippingAddress'])
+            ->withCount('items')
+            ->withSum('items as total_qty','quantity');
         if ($status = $request->string('status')->toString()) {
             $q->where('status', $status);
         }

@@ -39,17 +39,51 @@ class ProductController extends Controller
         if (($hasGrill = $request->input('has_grill')) !== null) {
             $query->where('has_grill', filter_var($hasGrill, FILTER_VALIDATE_BOOLEAN));
         }
+        if (($childLock = $request->input('child_lock')) !== null) {
+            $query->where('child_lock', filter_var($childLock, FILTER_VALIDATE_BOOLEAN));
+        }
+        if ($request->filled('min_capacity')) {
+            $query->where('capacity_liters', '>=', (int) $request->input('min_capacity'));
+        }
+        if ($request->filled('max_capacity')) {
+            $query->where('capacity_liters', '<=', (int) $request->input('max_capacity'));
+        }
+        if ($request->filled('min_power')) {
+            $query->where('power_watt', '>=', (int) $request->input('min_power'));
+        }
+        if ($request->filled('max_power')) {
+            $query->where('power_watt', '<=', (int) $request->input('max_power'));
+        }
+        if ($request->filled('min_energy_rating')) {
+            $query->where('energy_rating', '>=', (int) $request->input('min_energy_rating'));
+        }
 
         $sort = $request->string('sort')->toString();
         if ($sort === 'price_asc') $query->orderByRaw('COALESCE(sale_price, price) asc');
         elseif ($sort === 'price_desc') $query->orderByRaw('COALESCE(sale_price, price) desc');
-        else $query->latest();
+        elseif ($sort === 'best_selling') {
+            $query->select('products.*')
+                ->leftJoin('order_items', 'order_items.product_id', '=', 'products.id')
+                ->leftJoin('orders', function($join) {
+                    $join->on('orders.id', '=', 'order_items.order_id')
+                         ->where('orders.status', 'delivered');
+                })
+                ->groupBy('products.id')
+                ->orderByRaw('COALESCE(SUM(order_items.quantity),0) DESC');
+        } else $query->latest();
 
         $products = $query->paginate(12)->appends($request->query());
-        $brands = Brand::where('is_active', true)->orderBy('name')->get(['name','slug']);
-        $categories = Category::where('is_active', true)->orderBy('name')->get(['name','slug']);
+        $brands = Brand::where('is_active', true)->orderBy('name')->get(['id','name','slug']);
+        // Build category tree
+        $rootCategories = Category::whereNull('parent_id')->where('is_active', true)->orderBy('name')->get(['id','name','slug']);
+        $categoriesByParent = Category::where('is_active', true)->get(['id','name','slug','parent_id'])->groupBy('parent_id');
 
-        return view('products.index', compact('products', 'brands', 'categories'));
+        return view('products.index', [
+            'products' => $products,
+            'brands' => $brands,
+            'rootCategories' => $rootCategories,
+            'categoriesByParent' => $categoriesByParent,
+        ]);
     }
 
     public function show(string $slug)
@@ -62,4 +96,3 @@ class ProductController extends Controller
         return view('products.show', compact('product'));
     }
 }
-

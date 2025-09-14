@@ -5,6 +5,11 @@
   <h1 class="text-xl font-semibold">Categories</h1>
   <a class="bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('admin.categories.create') }}">Create</a>
 </div>
+<form method="get" class="bg-white rounded shadow p-4 mb-4 grid grid-cols-1 md:grid-cols-6 gap-3">
+  <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Search name/slug" class="border rounded px-3 py-2 md:col-span-2" />
+  <button class="bg-blue-600 text-white px-4 py-2 rounded">Filter</button>
+</form>
+
 <div class="bg-white rounded shadow overflow-x-auto">
   <table class="min-w-full">
     <thead class="bg-gray-100 text-left">
@@ -14,6 +19,8 @@
         <th class="p-2">Slug</th>
         <th class="p-2">Parent</th>
         <th class="p-2">Active</th>
+        <th class="p-2">Products</th>
+        <th class="p-2">Sold</th>
         <th class="p-2">Actions</th>
       </tr>
     </thead>
@@ -25,6 +32,8 @@
           <td class="p-2">{{ $c->slug }}</td>
           <td class="p-2">{{ $c->parent->name ?? '-' }}</td>
           <td class="p-2">{{ $c->is_active ? 'Yes' : 'No' }}</td>
+          <td class="p-2">{{ $c->products_count }}</td>
+          <td class="p-2">{{ (int) ($c->sold_qty ?? 0) }}</td>
           <td class="p-2 whitespace-nowrap">
             @can('update', $c)
               <a class="text-blue-600 mr-2" href="{{ route('admin.categories.edit', $c->id) }}">Edit</a>

@@ -11,8 +11,22 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::with('parent')->latest()->paginate(20);
-        return view('admin.categories.index', compact('categories'));
+        $q = request()->string('q')->toString();
+        $query = Category::query()->with('parent')
+            ->withCount('products')
+            ->withSum(['products as sold_qty' => function($q){
+                $q->join('order_items','order_items.product_id','=','products.id')
+                  ->join('orders','orders.id','=','order_items.order_id')
+                  ->where('orders.status','delivered');
+            }], 'order_items.quantity');
+        if ($q) {
+            $query->where(function($b) use ($q){
+                $b->where('name','like',"%$q%")
+                  ->orWhere('slug','like',"%$q%");
+            });
+        }
+        $categories = $query->latest()->paginate(20)->appends(request()->query());
+        return view('admin.categories.index', compact('categories','q'));
     }
 
     public function create()
@@ -52,4 +66,3 @@ class CategoryController extends Controller
         return redirect()->route('admin.categories.index')->with('status', 'Category deleted');
     }
 }
-

@@ -52,6 +52,26 @@ class ProductController extends Controller
         if ($request->boolean('has_grill', null) !== null) {
             $query->where('has_grill', $request->boolean('has_grill'));
         }
+        if ($request->boolean('child_lock', null) !== null) {
+            $query->where('child_lock', $request->boolean('child_lock'));
+        }
+
+        // Attribute ranges
+        if ($request->filled('min_capacity')) {
+            $query->where('capacity_liters', '>=', (int) $request->input('min_capacity'));
+        }
+        if ($request->filled('max_capacity')) {
+            $query->where('capacity_liters', '<=', (int) $request->input('max_capacity'));
+        }
+        if ($request->filled('min_power')) {
+            $query->where('power_watt', '>=', (int) $request->input('min_power'));
+        }
+        if ($request->filled('max_power')) {
+            $query->where('power_watt', '<=', (int) $request->input('max_power'));
+        }
+        if ($request->filled('min_energy_rating')) {
+            $query->where('energy_rating', '>=', (int) $request->input('min_energy_rating'));
+        }
 
         // rating filter omitted until reviews/avg available
 
@@ -60,6 +80,15 @@ class ProductController extends Controller
             $query->orderByRaw('COALESCE(sale_price, price) asc');
         } elseif ($sort === 'price_desc') {
             $query->orderByRaw('COALESCE(sale_price, price) desc');
+        } elseif ($sort === 'best_selling') {
+            $query->select('products.*')
+                ->leftJoin('order_items', 'order_items.product_id', '=', 'products.id')
+                ->leftJoin('orders', function($join) {
+                    $join->on('orders.id', '=', 'order_items.order_id')
+                         ->where('orders.status', 'delivered');
+                })
+                ->groupBy('products.id')
+                ->orderByRaw('COALESCE(SUM(order_items.quantity),0) DESC');
         } else { // latest default
             $query->latest();
         }
@@ -80,4 +109,3 @@ class ProductController extends Controller
         return new ProductResource($product);
     }
 }
-

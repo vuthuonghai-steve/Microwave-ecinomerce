@@ -11,6 +11,8 @@
         <th class="p-2">Customer</th>
         <th class="p-2">Status</th>
         <th class="p-2">Payment</th>
+        <th class="p-2">Items</th>
+        <th class="p-2">Qty</th>
         <th class="p-2">Grand Total</th>
         <th class="p-2">Created</th>
         <th class="p-2">Actions</th>
@@ -24,6 +26,8 @@
           <td class="p-2">{{ $o->user->name ?? '-' }}</td>
           <td class="p-2">{{ $o->status }}</td>
           <td class="p-2">{{ $o->payment_status }}</td>
+          <td class="p-2">{{ $o->items_count }}</td>
+          <td class="p-2">{{ (int) ($o->total_qty ?? 0) }}</td>
           <td class="p-2">{{ number_format($o->grand_total,0,',','.') }}₫</td>
           <td class="p-2">{{ $o->created_at->format('Y-m-d H:i') }}</td>
           <td class="p-2"><a class="text-blue-600" href="{{ route('admin.orders.show', $o->id) }}">View</a></td>
@@ -34,4 +38,3 @@
 </div>
 <div class="mt-4">{{ $orders->links() }}</div>
 @endsection
-

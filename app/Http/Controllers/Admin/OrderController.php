@@ -14,6 +14,8 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Order::with(['user:id,name,email'])
+            ->withCount('items')
+            ->withSum('items as total_qty','quantity')
             ->latest()
             ->paginate(20);
 

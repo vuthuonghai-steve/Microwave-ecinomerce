@@ -13,11 +13,13 @@ use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\Admin\ShippingController as AdminShippingController;
 use App\Http\Controllers\Api\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\FeaturedController;
 
 // Public Catalog API per ../context/spec/Api/products.openapi.yaml
 Route::get('/products', [ApiProductController::class, 'index']);
 Route::get('/products/{slug}', [ApiProductController::class, 'show']);
 Route::get('/categories', [ApiCategoryController::class, 'index']);
+Route::get('/featured', [FeaturedController::class, 'index']);
 
 // Cart
 Route::middleware('auth:sanctum')->group(function () {

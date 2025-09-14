@@ -50,7 +50,7 @@ class ReportController extends Controller
             $type = 'revenue';
         }
 
-        if ($format === 'xlsx' && class_exists('Maatwebsite\\Excel\\Facades\\Excel')) {
+        if ($format === 'xlsx' && class_exists('PhpOffice\\PhpSpreadsheet\\Spreadsheet')) {
             // Build 2D array for Excel
             if ($type === 'revenue') {
                 $rows = [['Label','Revenue','Orders']];
@@ -61,18 +61,28 @@ class ReportController extends Controller
                 $rows = [['Product','Sold']];
                 foreach ($data['top_products'] as $p) { $rows[] = [$p['name'], $p['sold']]; }
             }
-            $export = new \App\Exports\ArrayExport($rows, ucfirst(str_replace('-', ' ', $type)));
-            return \Maatwebsite\Excel\Facades\Excel::download($export, sprintf('%s_%s.xlsx', $type, now()->format('Ymd_His')));
+
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setTitle(ucfirst(str_replace('-', ' ', $type)));
+            $sheet->fromArray($rows);
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $filename = sprintf('%s_%s.xlsx', $type, now()->format('Ymd_His'));
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $filename, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ]);
         }
 
         // Default CSV
         $csv = $this->service->exportCsv($type, $data);
-        $ext = $format === 'xlsx' ? 'xlsx' : 'csv';
-        $contentType = $format === 'xlsx' ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'text/csv; charset=UTF-8';
-        $filename = sprintf('%s_%s.%s', $type, now()->format('Ymd_His'), $ext);
+        $filename = sprintf('%s_%s.csv', $type, now()->format('Ymd_His'));
         return response($csv, 200, [
-            'Content-Type' => $contentType,
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 }
+

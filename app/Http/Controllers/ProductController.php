@@ -93,6 +93,33 @@ class ProductController extends Controller
             ->with(['brand:id,name,slug', 'category:id,name,slug', 'stock'])
             ->firstOrFail();
 
-        return view('products.show', compact('product'));
+        $relatedQuery = Product::query()
+            ->with('brand:id,name,slug')
+            ->where('is_active', true)
+            ->where('id', '<>', $product->id)
+            ->latest()
+            ->take(8);
+
+        if ($product->category_id) {
+            $relatedQuery->where('category_id', $product->category_id);
+        } elseif ($product->brand_id) {
+            $relatedQuery->where('brand_id', $product->brand_id);
+        }
+
+        $related = $relatedQuery->get();
+
+        // Fallback: if no related by category found, try by brand
+        if ($related->isEmpty() && $product->brand_id) {
+            $related = Product::query()
+                ->with('brand:id,name,slug')
+                ->where('is_active', true)
+                ->where('id', '<>', $product->id)
+                ->where('brand_id', $product->brand_id)
+                ->latest()
+                ->take(8)
+                ->get();
+        }
+
+        return view('products.show', compact('product','related'));
     }
 }

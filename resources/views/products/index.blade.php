@@ -67,35 +67,78 @@
             </div>
         </form>
 
-        <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div id="productGrid" class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @forelse($products as $p)
-                <a href="{{ route('products.show', $p->slug) }}" class="block bg-white rounded-md shadow hover:shadow-md transition">
-                    @if($p->thumbnail)
-                        <img src="{{ $p->thumbnail }}" alt="{{ $p->name }}" class="w-full h-40 object-cover rounded-t-md">
-                    @endif
-                    <div class="p-4">
-                        <div class="text-sm text-gray-500">{{ $p->brand->name ?? '' }}</div>
-                        <div class="font-medium">{{ $p->name }}</div>
-                        <div class="mt-1">
-                            @php $final = $p->sale_price ?? $p->price; @endphp
-                            @if($p->sale_price)
-                                <span class="text-red-600 font-semibold">{{ number_format($final,0,',','.') }}₫</span>
-                                <span class="text-gray-400 line-through ml-2">{{ number_format($p->price,0,',','.') }}₫</span>
-                            @else
-                                <span class="text-gray-900 font-semibold">{{ number_format($final,0,',','.') }}₫</span>
-                            @endif
-                        </div>
-                    <div class="text-xs text-gray-500 mt-1">{{ $p->capacity_liters }}L • @if($p->inverter) Inverter • @endif @if($p->has_grill) Có nướng @endif</div>
-                    </div>
-                </a>
+                @include('components.product-card', ['product' => $p])
             @empty
                 <div class="col-span-full text-center text-gray-500">Không có sản phẩm phù hợp.</div>
             @endforelse
         </div>
 
-        <div class="mt-6">{{ $products->links() }}</div>
+        <div class="mt-6 text-center">
+          <button id="loadMore" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded">Tải thêm</button>
+        </div>
+
+        <button id="scrollTopBtn" title="Lên đầu trang" class="hidden fixed bottom-6 right-6 bg-blue-600 text-white rounded-full w-12 h-12 shadow-lg">↑</button>
       </div>
     </div>
 </div>
+
+<script>
+  (function(){
+    const grid = document.getElementById('productGrid');
+    const loadBtn = document.getElementById('loadMore');
+    if(!grid || !loadBtn) return;
+    let page = {{ $products->currentPage() }};
+    const lastPage = {{ $products->lastPage() }};
+    const baseQuery = new URLSearchParams(window.location.search);
+    const buildCard = (p) => {
+      const finalPrice = p.sale_price ?? p.price;
+      return `
+        <a href="/products/${p.slug}" class="block bg-white rounded-md shadow hover:shadow-md transition">
+          ${p.thumbnail ? `<img src="${p.thumbnail}" alt="${p.name}" class="w-full h-40 object-cover rounded-t-md">` : ''}
+          <div class="p-4">
+            <div class="font-medium line-clamp-2">${p.name}</div>
+            <div class="mt-1">
+              ${p.sale_price ? `<span class=\"text-red-600 font-semibold\">${Number(finalPrice).toLocaleString('vi-VN')}₫</span>
+              <span class=\"text-gray-400 line-through ml-2\">${Number(p.price).toLocaleString('vi-VN')}₫</span>`
+              : `<span class=\"text-gray-900 font-semibold\">${Number(finalPrice).toLocaleString('vi-VN')}₫</span>`}
+            </div>
+          </div>
+        </a>`;
+    };
+    const fetchNext = async () => {
+      if (page >= lastPage) { loadBtn.disabled = true; loadBtn.textContent = 'Hết sản phẩm'; return; }
+      page += 1;
+      const params = new URLSearchParams(baseQuery);
+      params.set('page', page);
+      const res = await fetch('/api/products?' + params.toString());
+      const json = await res.json();
+      const items = json.data || [];
+      const html = items.map(buildCard).join('');
+      grid.insertAdjacentHTML('beforeend', html);
+      if (page >= (json.meta?.last_page || lastPage)) { loadBtn.disabled = true; loadBtn.textContent = 'Hết sản phẩm'; }
+      // show scroll-to-top button after loading more
+      const topBtn = document.getElementById('scrollTopBtn');
+      if (topBtn) topBtn.classList.remove('hidden');
+    };
+    loadBtn.addEventListener('click', fetchNext);
+    // Infinite scroll
+    window.addEventListener('scroll', () => {
+      if (loadBtn.disabled) return;
+      const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
+      if (nearBottom) fetchNext();
+    });
+
+    // Scroll to top
+    const topBtn = document.getElementById('scrollTopBtn');
+    if (topBtn) {
+      topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 400) topBtn.classList.remove('hidden'); else topBtn.classList.add('hidden');
+      });
+    }
+  })();
+</script>
 </body>
 </html>

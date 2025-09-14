@@ -2,14 +2,27 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Catalog web pages
-use App\Http\Controllers\ProductController;
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products', [\App\Http\Controllers\ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{slug}', [\App\Http\Controllers\ProductController::class, 'show'])->name('products.show');
+
+// Customer Authentication (web session)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'login']);
+    Route::get('/register', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'register']);
+
+    // Password reset
+    Route::get('/password/forgot', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('/password/email', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::get('/password/reset/{token}', [\App\Http\Controllers\Auth\NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/password/reset', [\App\Http\Controllers\Auth\NewPasswordController::class, 'store'])->name('password.update');
+});
+
+Route::post('/logout', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 // Admin UI (Blade)
 use App\Http\Controllers\Admin\ProductController as AdminProductWebController;
@@ -18,7 +31,9 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryWebController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderWebController;
 use App\Http\Controllers\Admin\ReportController as AdminReportWebController;
-
+use App\Http\Controllers\Auth\CustomerAuthController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
 // Admin auth
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');

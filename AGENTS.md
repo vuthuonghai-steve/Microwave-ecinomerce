@@ -15,13 +15,15 @@
 
 ## Quy Trình Ưu Tiên (AI Agent)
 - Đọc `TODO.md` của repo → chốt phạm vi và thứ tự thực thi (MVP trước, mở rộng sau).
+- spec duoc dat trong `../context` . Các file spec nằm trong `../context/spec/{models,Api,Rules,Flows}`.
+- Chức năng tổng quan ở `../context/chucnangchinh/`. Nếu có, tham chiếu thêm `../context/Design_database/database.json`.
 - Duyệt specs và ghi rõ nguồn: models→migrations/Eloquent; Api→routes/controllers; Rules/Flows→test cases.
 - Thiếu dữ liệu → hỏi bổ sung (tránh “đoán mò”). PR nhỏ, tập trung; luôn kèm test và dẫn chiếu file spec liên quan.
  - Template xác nhận trước khi code: "Duyệt files: [danh sách]. Hướng: [tóm tắt]. Có xác nhận triển khai?".
  - Sau khi triển khai: chạy full test suite và tạo coverage report nếu khả dụng.
 
 ## Lệnh Build, Test, Dev (kèm output kỳ vọng)
-- Cài đặt: `composer install` + `npm install`.
+- Cài đặt: `composer install` + `npm install`. 
 - Cấu hình: `cp .env.example .env` → `php artisan key:generate`.
 - Dev all-in-one: `composer run dev` (server, queue, logs, Vite chạy song song).
 - DB: `php artisan migrate` → thấy “Migrating: …”, “Migrated: …”; seed: `php artisan db:seed`.
@@ -88,3 +90,5 @@
       $table->timestamps();
   });
   ```
+## Lưu ý khi thực hiện fix bug : 
+- đọc log trong đường dẫn sau để hiểu thêm về bug xảy ra : C:\store\HURE\dh12c1\dh12c1\nam_4\project\Laravel\economic-lovisong\microwave-ecommerce\storage\logs\laravel.log

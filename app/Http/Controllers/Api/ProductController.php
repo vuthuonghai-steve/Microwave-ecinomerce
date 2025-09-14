@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Models\Brand;
@@ -93,9 +94,16 @@ class ProductController extends Controller
             $query->latest();
         }
 
-        $products = $query->paginate(12)->appends($request->query());
+        $page = (int) $request->query('page', 1);
+        $cacheKey = 'api_products:'.md5($request->fullUrl());
+        $ttl = 120; // seconds
+        $payload = Cache::remember($cacheKey, $ttl, function () use ($query, $request) {
+            $products = $query->paginate(12)->appends($request->query());
+            // Transform to the same JSON structure Resource would produce
+            return ProductResource::collection($products)->response()->getData(true);
+        });
 
-        return ProductResource::collection($products);
+        return response()->json($payload);
     }
 
     public function show(string $slug)
@@ -105,7 +113,6 @@ class ProductController extends Controller
             ->where('is_active', true)
             ->with(['brand:id,name,slug', 'category:id,name,slug', 'stock:product_id,stock_on_hand,stock_reserved'])
             ->firstOrFail();
-
         return new ProductResource($product);
     }
 }

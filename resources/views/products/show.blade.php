@@ -51,4 +51,18 @@
 </div>
 </body>
 </html>
-
+@if(isset($related) && $related->count())
+<!DOCTYPE html>
+<html lang="vi">
+<body>
+<div class="max-w-5xl mx-auto p-4">
+  <h2 class="text-xl font-semibold mb-3">Sản phẩm liên quan</h2>
+  <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+    @foreach($related as $product)
+      @include('components.product-card', ['product' => $product])
+    @endforeach
+  </div>
+</div>
+</body>
+</html>
+@endif

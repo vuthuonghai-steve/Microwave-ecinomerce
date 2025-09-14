@@ -36,3 +36,4 @@ Tài liệu định hướng quy trình xây dựng website, dựa trên context
 - [ ] Admin (tùy chọn): scaffold quản trị sản phẩm/đơn; có thể tích hợp Filament sau khi ổn định mô hình.
 
 Gợi ý lệnh: `php artisan make:model Product -m`, `php artisan migrate`, `php artisan make:controller ProductController --resource`, `php artisan test`.
+  

@@ -41,5 +41,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CatalogSeeder::class);
         // Seed one default address for the first user
         $this->call(AddressSeeder::class);
+        // Seed demo orders/items for reports
+        $this->call(ReportsDemoSeeder::class);
     }
 }

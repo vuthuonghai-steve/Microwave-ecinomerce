@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\BrandController as AdminBrandWebController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryWebController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderWebController;
+use App\Http\Controllers\Admin\ReportController as AdminReportWebController;
 
 // Admin auth
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
@@ -55,4 +56,10 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/orders/{id}', [AdminOrderWebController::class, 'show'])->name('admin.orders.show');
     Route::post('/orders/{id}/status', [AdminOrderWebController::class, 'updateStatus'])->name('admin.orders.status');
     Route::post('/orders/{id}/push-to-shipping', [AdminOrderWebController::class, 'pushToShipping'])->name('admin.orders.push_shipping');
+
+    // Reports
+    Route::get('/reports', [AdminReportWebController::class, 'index'])->name('admin.reports.index');
+    Route::get('/reports/revenue-data', [AdminReportWebController::class, 'revenue'])->name('admin.reports.revenue_data');
+    Route::get('/reports/best-selling-data', [AdminReportWebController::class, 'bestSelling'])->name('admin.reports.best_selling_data');
+    Route::get('/reports/export', [AdminReportWebController::class, 'export'])->name('admin.reports.export');
 });

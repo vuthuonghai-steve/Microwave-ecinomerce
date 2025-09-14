@@ -9,11 +9,13 @@
 <body class="bg-gray-50 text-gray-900">
 <div class="max-w-7xl mx-auto p-4">
     <nav class="flex gap-4 mb-6 items-center">
+        <!-- views page report -->
+        <a class="text-blue-600" href="{{ route('admin.reports.index') }}">Reports</a>
         <a class="text-blue-600" href="{{ route('admin.products.index') }}">Products</a>
         <a class="text-blue-600" href="{{ route('admin.brands.index') }}">Brands</a>
         <a class="text-blue-600" href="{{ route('admin.categories.index') }}">Categories</a>
         <a class="text-blue-600" href="{{ route('admin.orders.index') }}">Orders</a>
-        <!-- buttoon back -->
+        <!-- button back -->
         
         <form method="post" action="{{ route('admin.logout') }}" class="ml-auto">
             @csrf
@@ -26,5 +28,6 @@
     @yield('content')
     <a class="text-green-600 mt-4" href="{{ route('admin.dashboard') }}">Back toDashboard</a>
   </div>
+@stack('scripts')
 </body>
 </html>

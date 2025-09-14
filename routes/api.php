@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController
 use App\Http\Controllers\Api\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\Admin\ShippingController as AdminShippingController;
+use App\Http\Controllers\Api\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Api\AuthController;
 
 // Public Catalog API per ../context/spec/Api/products.openapi.yaml
@@ -68,6 +69,11 @@ Route::prefix('admin')->middleware(['auth:sanctum','admin'])->group(function () 
 
     // Shipping
     Route::post('/orders/{id}/push-to-shipping', [AdminShippingController::class, 'pushToShipping']);
+
+    // Reports
+    Route::get('/reports/revenue', [AdminReportController::class, 'revenue']);
+    Route::get('/reports/best-selling-products', [AdminReportController::class, 'bestSelling']);
+    Route::get('/reports/export', [AdminReportController::class, 'export']);
 });
 
 // Shipping webhooks (public)

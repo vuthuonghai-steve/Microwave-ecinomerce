@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class CustomerAuthController extends Controller
 {
@@ -49,9 +50,13 @@ class CustomerAuthController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
+        // Đưa việc gửi email xác thực vào hàng đợi để không chặn request
+        \App\Jobs\SendVerificationEmail::dispatch($user);
+
+        // Đăng nhập để có thể đến trang yêu cầu xác thực
         Auth::login($user);
         $request->session()->regenerate();
-        return redirect('/');
+        return redirect('/') -> with('status', '�� g?i email x�c th?c. Vui l�ng ki?m tra h?p thu.');
     }
 
     public function logout(Request $request)
@@ -62,4 +67,3 @@ class CustomerAuthController extends Controller
         return redirect('/');
     }
 }
-

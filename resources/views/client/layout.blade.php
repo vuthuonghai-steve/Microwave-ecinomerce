@@ -30,6 +30,15 @@
     </div>
   </header>
   <main class="min-h-screen">
+    @auth
+      @if(!auth()->user()->hasVerifiedEmail())
+        <div class="max-w-7xl mx-auto px-4 mt-4">
+          <div class="bg-yellow-50 text-yellow-800 px-4 py-2 rounded">
+            Tài khoản của bạn chưa xác thực email. <a class="underline" href="{{ route('verification.notice') }}">Xác thực ngay</a>.
+          </div>
+        </div>
+      @endif
+    @endauth
     @if(session('status'))
       <div class="max-w-7xl mx-auto px-4 mt-4">
         <div class="bg-green-100 text-green-800 px-4 py-2 rounded">{{ session('status') }}</div>

@@ -29,8 +29,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/items/{id}/update', [\App\Http\Controllers\CartController::class, 'updateItem'])->name('cart.items.update');
     Route::post('/cart/items/{id}/remove', [\App\Http\Controllers\CartController::class, 'removeItem'])->name('cart.items.remove');
 
-    Route::get('/checkout', [\App\Http\Controllers\CheckoutWebController::class, 'create'])->name('checkout.create');
-    Route::post('/checkout', [\App\Http\Controllers\CheckoutWebController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout', [\App\Http\Controllers\CheckoutWebController::class, 'create'])->middleware('verified')->name('checkout.create');
+    Route::post('/checkout', [\App\Http\Controllers\CheckoutWebController::class, 'store'])->middleware('verified')->name('checkout.store');
 
     Route::get('/my/orders', [\App\Http\Controllers\CustomerOrderController::class, 'index'])->name('orders.index');
     Route::get('/my/orders/{id}', [\App\Http\Controllers\CustomerOrderController::class, 'show'])->name('orders.show');
@@ -69,6 +69,8 @@ use App\Http\Controllers\Admin\ReportController as AdminReportWebController;
 use App\Http\Controllers\Auth\CustomerAuthController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 // Admin auth
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
@@ -113,3 +115,23 @@ Route::prefix('admin')->middleware(['auth:admin','admin'])->group(function () {
     Route::get('/reports/best-selling-data', [AdminReportWebController::class, 'bestSelling'])->name('admin.reports.best_selling_data');
     Route::get('/reports/export', [AdminReportWebController::class, 'export'])->name('admin.reports.export');
 });
+
+// Email verification (Laravel built-in)
+Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
+
+    Route::post('/email/verification-notification', function (Request $request) {
+        if ($request->user() && $request->user()->hasVerifiedEmail()) {
+            return back()->with('status', 'Email đã được xác thực trước đó.');
+        }
+        \App\Jobs\SendVerificationEmail::dispatch($request->user());
+        return back()->with('status', 'Đã xếp lịch gửi email xác thực. Vui lòng kiểm tra hộp thư.');
+    })->middleware('throttle:6,1')->name('verification.send');
+});
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect()->intended('/')->with('status', 'Xác thực email thành công!');
+})->middleware(['auth','signed'])->name('verification.verify');

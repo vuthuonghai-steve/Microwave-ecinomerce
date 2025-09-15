@@ -84,7 +84,13 @@ function ensureWishBadge() {
 
 async function updateWishlistBadge() {
   try {
-    const res = await fetch('/wishlist/count', { credentials: 'same-origin' });
+    const res = await fetch('/wishlist/count', {
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json'
+      }
+    });
     if (!res.ok) return;
     const data = await res.json();
     const badge = ensureWishBadge();
@@ -101,7 +107,13 @@ function ensureCartBadge() {
 
 async function updateCartBadge() {
   try {
-    const res = await fetch('/cart/count', { credentials: 'same-origin' });
+    const res = await fetch('/cart/count', {
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json'
+      }
+    });
     if (!res.ok) return;
     const data = await res.json();
     const badge = ensureCartBadge();
@@ -126,6 +138,10 @@ function showToast(message, isError = false) {
   setTimeout(() => toast.remove(), 2500);
 }
 
-// Initialize cart badge count on load (if authenticated; will no-op if unauthorized)
-updateCartBadge();
-updateWishlistBadge();
+// Initialize badges only when relevant elements exist (avoid guest/admin pages)
+if (document.getElementById('navCartCount') || document.getElementById('miniCartBadge')) {
+  updateCartBadge();
+}
+if (document.getElementById('navWishCount') || document.getElementById('miniWishBadge')) {
+  updateWishlistBadge();
+}

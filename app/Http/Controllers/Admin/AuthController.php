@@ -32,7 +32,7 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Tài khoản không có quyền Admin.'])->withInput();
         }
 
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->route('admin.dashboard');
     }
 
     public function logout(Request $request)
@@ -43,4 +43,3 @@ class AuthController extends Controller
         return redirect()->route('admin.login');
     }
 }
-

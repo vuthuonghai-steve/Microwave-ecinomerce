@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $product->name }}</title>
-    @vite(['resources/css/app.css','resources/js/app.js'])
-</head>
-<body class="bg-gray-50 text-gray-900">
+@extends('client.layout')
+@section('title', $product->name)
+@section('content')
 <div class="max-w-5xl mx-auto p-4">
     <a href="{{ route('products.index') }}" class="text-blue-600">← Quay lại danh sách</a>
 
@@ -46,15 +40,21 @@
             @if($product->description)
                 <div class="mt-4 prose max-w-none">{!! nl2br(e($product->description)) !!}</div>
             @endif
+            <form method="post" action="{{ route('cart.add') }}" class="mt-6">
+              @csrf
+              <input type="hidden" name="product_id" value="{{ $product->id }}" />
+              <label class="text-sm">Số lượng</label>
+              <input type="number" name="quantity" value="1" min="1" class="border rounded px-2 py-1 w-24 ml-2" />
+              <button class="bg-green-600 text-white px-4 py-2 rounded ml-3">Thêm vào giỏ</button>
+            </form>
+            <form method="post" action="{{ route('wishlist.add') }}" class="mt-3">
+              @csrf
+              <input type="hidden" name="product_id" value="{{ $product->id }}" />
+              <button class="bg-pink-600 text-white px-4 py-2 rounded">Thêm vào yêu thích</button>
+            </form>
         </div>
     </div>
-</div>
-</body>
-</html>
 @if(isset($related) && $related->count())
-<!DOCTYPE html>
-<html lang="vi">
-<body>
 <div class="max-w-5xl mx-auto p-4">
   <h2 class="text-xl font-semibold mb-3">Sản phẩm liên quan</h2>
   <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -63,6 +63,5 @@
     @endforeach
   </div>
 </div>
-</body>
-</html>
 @endif
+@endsection

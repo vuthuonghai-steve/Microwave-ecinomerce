@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quên mật khẩu</title>
-  @vite(['resources/css/app.css','resources/js/app.js'])
-</head>
-<body class="bg-gray-100 text-gray-900">
-  <div class="min-h-screen flex items-center justify-center p-4">
+@extends('client.layout')
+@section('title','Quên mật khẩu')
+@section('content')
+  <div class="max-w-7xl mx-auto p-4 flex items-center justify-center">
     <div class="w-full max-w-md bg-white rounded shadow p-6">
       <h1 class="text-xl font-semibold mb-4">Quên mật khẩu</h1>
       @if(session('status'))
@@ -26,6 +20,4 @@
       </form>
     </div>
   </div>
-</body>
-</html>
-
+@endsection

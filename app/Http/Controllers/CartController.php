@@ -88,5 +88,10 @@ class CartController extends Controller
         $cart->items()->whereKey($id)->delete();
         return back()->with('status', 'Đã xóa sản phẩm khỏi giỏ');
     }
-}
 
+    public function count(Request $request)
+    {
+        $cart = $this->getActiveCart($request->user()->id)->loadCount('items');
+        return response()->json(['count' => $cart->items_count]);
+    }
+}

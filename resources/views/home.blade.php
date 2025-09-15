@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trang chủ</title>
-  @vite(['resources/css/app.css','resources/js/app.js'])
-</head>
-<body class="bg-gray-50 text-gray-900">
+@extends('client.layout')
+@section('title','Trang chủ')
+@section('content')
   <div class="max-w-7xl mx-auto p-4">
     <header class="bg-white rounded shadow p-6 mb-6">
       <h1 class="text-2xl font-semibold">Microwave E-commerce</h1>
@@ -65,9 +59,10 @@
       </div>
     </section>
   </div>
+@endsection
 
+@push('scripts')
   <script>
-    // Lazy-load featured blocks from API (CSR). Keeps SSR fallback.
     (async function(){
       try {
         const res = await fetch('/api/featured');
@@ -99,5 +94,4 @@
       } catch (e) { /* silent */ }
     })();
   </script>
-</body>
-</html>
+@endpush

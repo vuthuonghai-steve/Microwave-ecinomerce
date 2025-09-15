@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách sản phẩm</title>
-    @vite(['resources/css/app.css','resources/js/app.js'])
-</head>
-<body class="bg-gray-50 text-gray-900">
+@extends('client.layout')
+@section('title','Danh sách sản phẩm')
+@section('content')
 <div class="max-w-7xl mx-auto p-4">
     <h1 class="text-2xl font-semibold mb-4">Danh sách sản phẩm</h1>
 
@@ -83,7 +77,9 @@
       </div>
     </div>
 </div>
+@endsection
 
+@push('scripts')
 <script>
   (function(){
     const grid = document.getElementById('productGrid');
@@ -118,19 +114,15 @@
       const html = items.map(buildCard).join('');
       grid.insertAdjacentHTML('beforeend', html);
       if (page >= (json.meta?.last_page || lastPage)) { loadBtn.disabled = true; loadBtn.textContent = 'Hết sản phẩm'; }
-      // show scroll-to-top button after loading more
       const topBtn = document.getElementById('scrollTopBtn');
       if (topBtn) topBtn.classList.remove('hidden');
     };
     loadBtn.addEventListener('click', fetchNext);
-    // Infinite scroll
     window.addEventListener('scroll', () => {
       if (loadBtn.disabled) return;
       const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
       if (nearBottom) fetchNext();
     });
-
-    // Scroll to top
     const topBtn = document.getElementById('scrollTopBtn');
     if (topBtn) {
       topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
@@ -140,5 +132,4 @@
     }
   })();
 </script>
-</body>
-</html>
+@endpush

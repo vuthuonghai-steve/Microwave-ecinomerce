@@ -11,7 +11,8 @@ class EnsureAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
+        // Prefer admin guard for web, fallback to default user (e.g., Sanctum for API)
+        $user = $request->user('admin') ?: $request->user();
 
         if (!$user) {
             if ($request->expectsJson() || $request->is('api/*')) {

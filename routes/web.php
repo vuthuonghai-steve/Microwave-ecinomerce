@@ -18,8 +18,43 @@ Route::middleware('guest')->group(function () {
     // Password reset
     Route::get('/password/forgot', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('/password/email', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'store'])->name('password.email');
-    Route::get('/password/reset/{token}', [\App\Http\Controllers\Auth\NewPasswordController::class, 'create'])->name('password.reset');
-    Route::post('/password/reset', [\App\Http\Controllers\Auth\NewPasswordController::class, 'store'])->name('password.update');
+Route::get('/password/reset/{token}', [\App\Http\Controllers\Auth\NewPasswordController::class, 'create'])->name('password.reset');
+Route::post('/password/reset', [\App\Http\Controllers\Auth\NewPasswordController::class, 'store'])->name('password.update');
+});
+
+// Cart & Checkout (web)
+Route::middleware('auth')->group(function () {
+    Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/items/{id}/update', [\App\Http\Controllers\CartController::class, 'updateItem'])->name('cart.items.update');
+    Route::post('/cart/items/{id}/remove', [\App\Http\Controllers\CartController::class, 'removeItem'])->name('cart.items.remove');
+
+    Route::get('/checkout', [\App\Http\Controllers\CheckoutWebController::class, 'create'])->name('checkout.create');
+    Route::post('/checkout', [\App\Http\Controllers\CheckoutWebController::class, 'store'])->name('checkout.store');
+
+    Route::get('/my/orders', [\App\Http\Controllers\CustomerOrderController::class, 'index'])->name('orders.index');
+    Route::get('/my/orders/{id}', [\App\Http\Controllers\CustomerOrderController::class, 'show'])->name('orders.show');
+
+    // Addresses
+    Route::get('/my/addresses', [\App\Http\Controllers\AddressController::class, 'index'])->name('addresses.index');
+    Route::get('/my/addresses/create', [\App\Http\Controllers\AddressController::class, 'create'])->name('addresses.create');
+    Route::post('/my/addresses', [\App\Http\Controllers\AddressController::class, 'store'])->name('addresses.store');
+    Route::get('/my/addresses/{id}/edit', [\App\Http\Controllers\AddressController::class, 'edit'])->name('addresses.edit');
+    Route::put('/my/addresses/{id}', [\App\Http\Controllers\AddressController::class, 'update'])->name('addresses.update');
+    Route::delete('/my/addresses/{id}', [\App\Http\Controllers\AddressController::class, 'destroy'])->name('addresses.destroy');
+
+    // Cart mini count (JSON)
+    Route::get('/cart/count', [\App\Http\Controllers\CartController::class, 'count'])->name('cart.count');
+
+    // Profile
+    Route::get('/my/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/my/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+
+    // Wishlist
+    Route::get('/my/wishlist', [\App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/add', [\App\Http\Controllers\WishlistController::class, 'add'])->name('wishlist.add');
+    Route::post('/wishlist/items/{id}/remove', [\App\Http\Controllers\WishlistController::class, 'remove'])->name('wishlist.items.remove');
+    Route::get('/wishlist/count', [\App\Http\Controllers\WishlistController::class, 'count'])->name('wishlist.count');
 });
 
 Route::post('/logout', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'logout'])->middleware('auth')->name('logout');
@@ -39,7 +74,7 @@ Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name(
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
-Route::prefix('admin')->middleware('admin')->group(function () {
+Route::prefix('admin')->middleware(['auth:admin','admin'])->group(function () {
     Route::get('/', function () { return redirect()->route('admin.products.index'); })->name('admin.dashboard');
 
     // Products

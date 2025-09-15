@@ -42,12 +42,17 @@ class CatalogSeeder extends Seeder
         });
 
         // Products + Stocks
+        $thumbnails = [
+            'https://img.youtube.com/vi/WDLoqfOLHRQ/mqdefault.jpg',
+            'https://img.youtube.com/vi/Lbg-ULaCDKI/mqdefault.jpg',
+        ];
         $total = 30;
         Product::factory($total)
-            ->state(function () use ($brands, $categories) {
+            ->state(function () use ($brands, $categories, $thumbnails) {
                 return [
                     'brand_id' => $brands->random()->id,
                     'category_id' => $categories->random()->id,
+                    'thumbnail' => $thumbnails[array_rand($thumbnails)],
                 ];
             })
             ->create()
@@ -56,4 +61,3 @@ class CatalogSeeder extends Seeder
             });
     }
 }
-

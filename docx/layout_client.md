@@ -1,0 +1,29 @@
+  - Layout khách hàng                                                                                                                                                                                
+      - resources/views/client/layout.blade.php                                                                                                                                                      
+          - Header: Home, Sản phẩm, Tài khoản, Đơn hàng, Địa chỉ, Giỏ hàng (badge), Đăng nhập/Đăng ký/Đăng xuất.                                                                                     
+          - @stack('scripts') để đính JS riêng từng trang.                                                                                                                                           
+          - Nav hiển thị số item giỏ hàng qua #navCartCount (JS cập nhật).                                                                                                                           
+  - Trang dùng layout client                                                                                                                                                                         
+      - Trang chủ: resources/views/home.blade.php (extends client.layout, scripts via @push).                                                                                                        
+      - Danh sách sản phẩm: resources/views/products/index.blade.php (extends + scripts @push).                                                                                                      
+      - Chi tiết sản phẩm: resources/views/products/show.blade.php (extends + “Sản phẩm liên quan”).                                                                                                 
+      - Cart: resources/views/cart/index.blade.php, resources/views/cart/checkout.blade.php (extends).                                                                                               
+      - Orders: resources/views/orders/index.blade.php, resources/views/orders/show.blade.php (extends).                                                                                             
+      - Addresses: resources/views/addresses/index.blade.php, create.blade.php, edit.blade.php (extends).                                                                                            
+      - Auth: resources/views/auth/login.blade.php, register.blade.php, forgot-password.blade.php, reset-password.blade.php (extends).                                                               
+  - Mini-cart badge tích hợp header                                                                                                                                                                  
+      - JS (resources/js/app.js) cập nhật cả badge nổi và #navCartCount.                                                                                                                             
+      - Tự gọi updateCartBadge() lúc load.                                                                                                                                                           
+  - Tài khoản (my profile)                                                                                                                                                                           
+      - Controller: app/Http/Controllers/ProfileController.php                                                                                                                                       
+          - GET /my/profile (profile.edit)                                                                                                                                                           
+          - PUT /my/profile (profile.update) — cập nhật name, email, mật khẩu (tùy chọn).                                                                                                            
+      - View: resources/views/profile/index.blade.php                                                                                                                                                
+      - Routes (web.php, trong auth group): profile.edit, profile.update                                                                                                                             
+      - Link “Tài khoản” thêm vào layout client.                                                                                                                                                     
+  - Admin guard tách riêng (đã làm)                                                                                                                                                                  
+      - config/auth.php: guard admin                                                                                                                                                                 
+      - AdminAuthController dùng Auth::guard('admin')                                                                                                                                                
+      - EnsureAdmin ưu tiên guard('admin')
+      - routes/web.php admin group dùng ['auth:admin','admin']
+---

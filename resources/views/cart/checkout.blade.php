@@ -2,7 +2,7 @@
 @section('title','Thanh toán')
 @section('content')
   <div class="max-w-5xlmax-w-7xl mx-auto p-4">
-    <h1 class="text-2xl font-semibold mb-4">Thanh toán (COD)</h1>
+    <h1 class="text-2xl font-semibold mb-4">Thanh toán</h1>
     @if ($errors->any())
       <div class="bg-red-50 text-red-700 px-4 py-2 rounded mb-4">{{ $errors->first() }}</div>
     @endif
@@ -29,7 +29,18 @@
           </select>
           <div class="text-sm text-gray-600 mb-2">Phí vận chuyển: 30.000₫</div>
           <div class="font-medium mb-3">Tạm tính: {{ number_format($subtotal,0,',','.') }}₫</div>
-          <button class="w-full bg-green-600 text-white px-4 py-2 rounded">Đặt hàng (COD)</button>
+          <h2 class="font-semibold mb-2">Phương thức thanh toán</h2>
+          <div class="mb-3">
+            <label class="flex items-center">
+              <input type="radio" name="payment_method" value="cod" checked class="mr-2">
+              Thanh toán khi nhận hàng (COD)
+            </label>
+            <label class="flex items-center">
+              <input type="radio" name="payment_method" value="vnpay" class="mr-2">
+              Thanh toán qua VNPay
+            </label>
+          </div>
+          <button class="w-full bg-green-600 text-white px-4 py-2 rounded">Đặt hàng</button>
         </form>
       </div>
     </div>

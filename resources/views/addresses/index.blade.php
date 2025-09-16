@@ -1,7 +1,7 @@
 @extends('client.layout')
 @section('title','Địa chỉ của tôi')
 @section('content')
-  <div class="max-w-5xlmax-w-7xl mx-auto p-4">
+  <div class="max-w-5xl mx-auto p-4">
     <div class="flex items-center justify-between mb-4">
       <h1 class="text-2xl font-semibold">Địa chỉ của tôi</h1>
       <a class="bg-blue-600 text-white px-4 py-2 rounded" href="{{ route('addresses.create') }}">Thêm địa chỉ</a>

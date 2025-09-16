@@ -26,8 +26,7 @@ class OrderController extends Controller
     {
         $order = Order::with(['user:id,name,email', 'items.product', 'shippingAddress', 'items'])
             ->findOrFail($id);
-        $all = ['processing','packed','shipping','delivered','cancelled'];
-        $allowedStatuses = array_values(array_filter($all, fn ($s) => $this->canTransition($order->status, $s)));
+        $allowedStatuses = ['processing','packed','shipping','delivered','cancelled'];
         $carriers = [
             ['code' => 'ghn', 'name' => 'GHN'],
             ['code' => 'ghtk', 'name' => 'GHTK'],

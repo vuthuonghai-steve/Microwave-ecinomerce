@@ -1,7 +1,7 @@
 @extends('client.layout')
 @section('title','Giỏ hàng')
 @section('content')
-  <div class="max-w-5xlmax-w-7xl mx-auto p-4">
+  <div class="max-w-5xl mx-auto p-4">
     <h1 class="text-2xl font-semibold mb-4">Giỏ hàng</h1>
     @if(session('status'))
       <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">{{ session('status') }}</div>

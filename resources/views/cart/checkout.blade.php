@@ -19,9 +19,9 @@
         @endforeach
       </div>
       <div class="bg-white rounded shadow p-4">
-        <h2 class="font-semibold mb-2">Địa chỉ giao hàng</h2>
         <form method="post" action="{{ route('checkout.store') }}">
           @csrf
+          <h2 class="font-semibold mb-2">Địa chỉ giao hàng</h2>
           <select name="shipping_address_id" class="w-full border rounded px-3 py-2 mb-3" required>
             @foreach($addresses as $addr)
               <option value="{{ $addr->id }}">{{ $addr->full_name }} - {{ $addr->line1 }}, {{ $addr->district }}, {{ $addr->city }}</option>
@@ -29,7 +29,19 @@
           </select>
           <div class="text-sm text-gray-600 mb-2">Phí vận chuyển: 30.000₫</div>
           <div class="font-medium mb-3">Tạm tính: {{ number_format($subtotal,0,',','.') }}₫</div>
-          <button class="w-full bg-green-600 text-white px-4 py-2 rounded">Đặt hàng (COD)</button>
+
+          <div class="space-y-4">
+            <button type="submit" name="payment_method" value="cod" class="w-full bg-green-600 text-white px-4 py-2 rounded">Đặt hàng (COD)</button>
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">hoặc</span>
+                </div>
+            </div>
+            <button type="submit" name="payment_method" value="vnpay" class="w-full bg-blue-600 text-white px-4 py-2 rounded">Thanh toán Online qua VNPay</button>
+          </div>
         </form>
       </div>
     </div>

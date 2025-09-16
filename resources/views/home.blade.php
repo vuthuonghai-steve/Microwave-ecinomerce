@@ -18,7 +18,7 @@
         <h2 class="text-xl font-semibold">Danh mục nổi bật</h2>
         <a class="text-blue-600" href="{{ route('products.index') }}">Xem tất cả</a>
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+      <!-- <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
         @foreach($rootCategories as $c)
           <div class="bg-white rounded shadow p-3">
             <a href="{{ route('products.index', ['category' => $c->slug]) }}" class="font-medium text-blue-600">{{ $c->name }}</a>
@@ -32,7 +32,7 @@
             @endif
           </div>
         @endforeach
-      </div>
+      </div> -->
     </section>
 
     <section class="mb-8">

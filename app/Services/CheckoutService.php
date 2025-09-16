@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 class CheckoutService
 {
-    public function checkout(Cart $cart, int $shippingAddressId): Order
+    public function checkout(Cart $cart, int $shippingAddressId, string $paymentMethod = 'cod'): Order
     {
         if ($cart->items()->count() === 0) {
             throw ValidationException::withMessages([
@@ -24,7 +24,7 @@ class CheckoutService
 
         $address = Address::where('user_id', $cart->user_id)->findOrFail($shippingAddressId);
 
-        return DB::transaction(function () use ($cart, $address) {
+        return DB::transaction(function () use ($cart, $address, $paymentMethod) {
             $items = $cart->items()->with('product')->get();
             $productIds = $items->pluck('product_id')->all();
 
@@ -55,7 +55,7 @@ class CheckoutService
                 'code' => $this->generateOrderCode(),
                 'status' => 'pending',
                 'payment_status' => 'unpaid',
-                'payment_method' => 'cod',
+                'payment_method' => $paymentMethod,
                 'subtotal' => $subtotal,
                 'discount_total' => $discount,
                 'shipping_fee' => $shippingFee,
@@ -82,7 +82,7 @@ class CheckoutService
             // Create payment placeholder
             Payment::create([
                 'order_id' => $order->id,
-                'provider' => 'cod',
+                'provider' => $paymentMethod,
                 'amount' => $grand,
                 'status' => 'initiated',
                 'txn_code' => null,

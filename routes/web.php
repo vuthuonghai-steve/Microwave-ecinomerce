@@ -18,8 +18,8 @@ Route::middleware('guest')->group(function () {
     // Password reset
     Route::get('/password/forgot', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('/password/email', [\App\Http\Controllers\Auth\PasswordResetLinkController::class, 'store'])->name('password.email');
-Route::get('/password/reset/{token}', [\App\Http\Controllers\Auth\NewPasswordController::class, 'create'])->name('password.reset');
-Route::post('/password/reset', [\App\Http\Controllers\Auth\NewPasswordController::class, 'store'])->name('password.update');
+    Route::get('/password/reset/{token}', [\App\Http\Controllers\Auth\NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/password/reset', [\App\Http\Controllers\Auth\NewPasswordController::class, 'store'])->name('password.update');
 });
 
 // Cart & Checkout (web)
@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/my/orders', [\App\Http\Controllers\CustomerOrderController::class, 'index'])->name('orders.index');
     Route::get('/my/orders/{id}', [\App\Http\Controllers\CustomerOrderController::class, 'show'])->name('orders.show');
+    Route::get('/my/orders/{id}/pay', [\App\Http\Controllers\OrderPaymentController::class, 'showForm'])->name('orders.pay.form');
+    Route::post('/my/orders/{id}/pay', [\App\Http\Controllers\OrderPaymentController::class, 'pay'])->name('orders.pay');
 
     // Addresses
     Route::get('/my/addresses', [\App\Http\Controllers\AddressController::class, 'index'])->name('addresses.index');
@@ -57,6 +59,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/wishlist/count', [\App\Http\Controllers\WishlistController::class, 'count'])->name('wishlist.count');
 });
 
+Route::get('/payment/vnpay/return', [\App\Http\Controllers\OrderPaymentController::class, 'handleReturn'])->name('payment.vnpay.return');
+
 Route::post('/logout', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 // Admin UI (Blade)
@@ -69,6 +73,7 @@ use App\Http\Controllers\Admin\ReportController as AdminReportWebController;
 use App\Http\Controllers\Auth\CustomerAuthController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\OrderPaymentController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 // Admin auth
@@ -124,14 +129,14 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/email/verification-notification', function (Request $request) {
         if ($request->user() && $request->user()->hasVerifiedEmail()) {
-            return back()->with('status', 'Email đã được xác thực trước đó.');
+            return back()->with('status', 'Email da duoc xac thuc truoc do.');
         }
         \App\Jobs\SendVerificationEmail::dispatch($request->user());
-        return back()->with('status', 'Đã xếp lịch gửi email xác thực. Vui lòng kiểm tra hộp thư.');
+        return back()->with('status', 'Da xep lich gui email xac thuc. Vui long kiem tra hop thu.');
     })->middleware('throttle:6,1')->name('verification.send');
 });
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
-    return redirect()->intended('/')->with('status', 'Xác thực email thành công!');
+    return redirect()->intended('/')->with('status', 'Xac thuc email thanh cong!');
 })->middleware(['auth','signed'])->name('verification.verify');

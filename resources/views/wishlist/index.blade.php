@@ -1,7 +1,7 @@
 @extends('client.layout')
 @section('title','Yêu thích')
 @section('content')
-  <div class="max-w-7xl mx-auto p-4">
+  <div class="mx-auto p-4">
     <div class="flex items-center justify-between mb-4">
       <h1 class="text-2xl font-semibold">Danh sách yêu thích</h1>
       <a class="text-blue-600" href="{{ route('products.index') }}">Tiếp tục mua sắm</a>

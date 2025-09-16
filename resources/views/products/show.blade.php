@@ -1,7 +1,7 @@
 @extends('client.layout')
 @section('title', $product->name)
 @section('content')
-<div class="max-w-5xl mx-auto p-4">
+<div class="max-w-5xlmax-w-7xl mx-auto p-4">
     <a href="{{ route('products.index') }}" class="text-blue-600">← Quay lại danh sách</a>
 
     <div class="grid md:grid-cols-2 gap-6 mt-4 bg-white p-4 rounded-md shadow">
@@ -55,7 +55,7 @@
         </div>
     </div>
 @if(isset($related) && $related->count())
-<div class="max-w-5xl mx-auto p-4">
+<div class="max-w-5xlmax-w-7xl mx-auto p-4">
   <h2 class="text-xl font-semibold mb-3">Sản phẩm liên quan</h2>
   <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
     @foreach($related as $product)

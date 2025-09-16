@@ -1,11 +1,11 @@
 @extends('client.layout')
 @section('title','Danh sách sản phẩm')
 @section('content')
-<div class="max-w-7xl mx-auto p-4">
+<div class="mx-auto p-4">
     <h1 class="text-2xl font-semibold mb-4">Danh sách sản phẩm</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <aside class="md:col-span-1">
+    <div class="flex items-center justify-center">
+      <!-- <aside class="md:col-span-1">
         <div class="bg-white p-4 rounded shadow">
           <h2 class="font-semibold mb-2">Danh mục</h2>
           <ul class="space-y-1">
@@ -24,7 +24,7 @@
             @endforeach
           </ul>
         </div>
-      </aside>
+      </aside> -->
       <div class="md:col-span-3">
         <form method="get" class="grid md:grid-cols-6 gap-3 bg-white p-4 rounded-md shadow mb-6">
             <input type="text" name="q" value="{{ request('q') }}" placeholder="Tìm kiếm..." class="col-span-2 border rounded px-3 py-2">

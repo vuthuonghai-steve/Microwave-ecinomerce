@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Payment extends Model
+class PaymentTransaction extends Model
 {
     use HasFactory;
 
@@ -13,16 +13,12 @@ class Payment extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'paid_at' => 'datetime',
+        'raw_request' => 'array',
+        'raw_response' => 'array',
     ];
 
-    public function order()
+    public function payment()
     {
-        return $this->belongsTo(Order::class);
-    }
-
-    public function transactions()
-    {
-        return $this->hasMany(PaymentTransaction::class);
+        return $this->belongsTo(Payment::class);
     }
 }

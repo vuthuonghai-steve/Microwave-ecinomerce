@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Payment;
 
 class Order extends Model
 {
@@ -24,6 +25,11 @@ class Order extends Model
     public function shippingAddress()
     {
         return $this->belongsTo(Address::class, 'shipping_address_id');
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
     }
 }
 

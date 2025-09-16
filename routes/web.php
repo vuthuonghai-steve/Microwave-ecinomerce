@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -31,6 +32,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/checkout', [\App\Http\Controllers\CheckoutWebController::class, 'create'])->middleware('verified')->name('checkout.create');
     Route::post('/checkout', [\App\Http\Controllers\CheckoutWebController::class, 'store'])->middleware('verified')->name('checkout.store');
+
+    // Payment Gateway Callbacks
+    Route::get('/payment/vnpay/return', [PaymentController::class, 'vnpayReturn'])->name('payment.vnpay.return');
 
     Route::get('/my/orders', [\App\Http\Controllers\CustomerOrderController::class, 'index'])->name('orders.index');
     Route::get('/my/orders/{id}', [\App\Http\Controllers\CustomerOrderController::class, 'show'])->name('orders.show');

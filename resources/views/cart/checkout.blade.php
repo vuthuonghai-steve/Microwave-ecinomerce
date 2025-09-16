@@ -1,13 +1,8 @@
 @extends('client.layout')
 @section('title','Thanh toán')
 @section('content')
-<<<<<<< HEAD
-  <div class="max-w-5xlmax-w-7xl mx-auto p-4">
+  <div class="max-w-7xl mx-auto p-4">
     <h1 class="text-2xl font-semibold mb-4">Thanh toán</h1>
-=======
-  <div class="max-w-5xl mx-auto p-4">
-    <h1 class="text-2xl font-semibold mb-4">Thanh toán (COD)</h1>
->>>>>>> 3fedca1295f514a2ac4fdc738915c02bb0c357f7
     @if ($errors->any())
       <div class="bg-red-50 text-red-700 px-4 py-2 rounded mb-4">{{ $errors->first() }}</div>
     @endif
@@ -34,34 +29,18 @@
           </select>
           <div class="text-sm text-gray-600 mb-2">Phí vận chuyển: 30.000₫</div>
           <div class="font-medium mb-3">Tạm tính: {{ number_format($subtotal,0,',','.') }}₫</div>
-<<<<<<< HEAD
           <h2 class="font-semibold mb-2">Phương thức thanh toán</h2>
-          <div class="mb-3">
-            <label class="flex items-center">
-              <input type="radio" name="payment_method" value="cod" checked class="mr-2">
+          <div class="mb-3 space-y-2">
+            <label class="flex items-center p-3 border rounded-lg hover:border-gray-400">
+              <input type="radio" name="payment_method" value="cod" checked class="mr-2 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300">
               Thanh toán khi nhận hàng (COD)
             </label>
-            <label class="flex items-center">
-              <input type="radio" name="payment_method" value="vnpay" class="mr-2">
+            <label class="flex items-center p-3 border rounded-lg hover:border-gray-400">
+              <input type="radio" name="payment_method" value="vnpay" class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
               Thanh toán qua VNPay
             </label>
           </div>
-          <button class="w-full bg-green-600 text-white px-4 py-2 rounded">Đặt hàng</button>
-=======
-
-          <div class="space-y-4">
-            <button type="submit" name="payment_method" value="cod" class="w-full bg-green-600 text-white px-4 py-2 rounded">Đặt hàng (COD)</button>
-            <div class="relative">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-300"></div>
-                </div>
-                <div class="relative flex justify-center text-sm">
-                    <span class="px-2 bg-white text-gray-500">hoặc</span>
-                </div>
-            </div>
-            <button type="submit" name="payment_method" value="vnpay" class="w-full bg-blue-600 text-white px-4 py-2 rounded">Thanh toán Online qua VNPay</button>
-          </div>
->>>>>>> 3fedca1295f514a2ac4fdc738915c02bb0c357f7
+          <button class="w-full bg-green-600 text-white px-4 py-2 rounded mt-4">Đặt hàng</button>
         </form>
       </div>
     </div>

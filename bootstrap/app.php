@@ -16,14 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureAdmin::class,
         ]);
-        // Redirect unauthenticated users to correct login form for each area
-        $middleware->redirectGuestsTo(function ($request) {
-            if ($request->is('admin') || $request->is('admin/*')) {
-                return route('admin.login');
-            }
-            return route('login');
-        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
+

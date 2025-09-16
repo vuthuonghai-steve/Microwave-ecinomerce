@@ -11,18 +11,9 @@ class Payment extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'amount' => 'decimal:2',
-        'paid_at' => 'datetime',
-    ];
-
     public function order()
     {
         return $this->belongsTo(Order::class);
     }
-
-    public function transactions()
-    {
-        return $this->hasMany(PaymentTransaction::class);
-    }
 }
+

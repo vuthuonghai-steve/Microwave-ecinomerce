@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\CategoryController as ApiCategoryController;
 use App\Http\Controllers\Api\CartController as ApiCartController;
 use App\Http\Controllers\Api\CheckoutController as ApiCheckoutController;
 use App\Http\Controllers\Api\AddressController as ApiAddressController;
-use App\Http\Controllers\Api\PaymentGatewayController as ApiPaymentGatewayController;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Api\Admin\BrandController as AdminBrandController;
@@ -32,15 +31,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Checkout
     Route::post('/checkout', [ApiCheckoutController::class, 'store']);
 
-    // Payment initiation
-    Route::post('/orders/{order}/pay', [ApiPaymentGatewayController::class, 'initiate']);
-
     // Addresses (current user)
     Route::get('/addresses', [ApiAddressController::class, 'index']);
 });
-
-// Payment IPN (public for gateway callbacks)
-Route::post('/payment/ipn', [ApiPaymentGatewayController::class, 'ipn']);
 
 // Auth (token-based)
 Route::post('/auth/register', [AuthController::class, 'register']);

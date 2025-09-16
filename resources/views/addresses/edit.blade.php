@@ -1,7 +1,7 @@
 @extends('client.layout')
 @section('title','Sửa địa chỉ')
 @section('content')
-  <div class="max-w-3xlmax-w-7xl mx-auto p-4">
+  <div class="max-w-3xl mx-auto p-4">
     <h1 class="text-2xl font-semibold mb-4">Sửa địa chỉ</h1>
     @if ($errors->any())
       <div class="bg-red-50 text-red-700 px-4 py-2 rounded mb-4">{{ $errors->first() }}</div>

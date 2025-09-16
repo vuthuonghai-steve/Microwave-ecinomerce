@@ -11,14 +11,6 @@ class Order extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'subtotal' => 'decimal:2',
-        'discount_total' => 'decimal:2',
-        'shipping_fee' => 'decimal:2',
-        'grand_total' => 'decimal:2',
-        'paid_at' => 'datetime',
-    ];
-
     public function items()
     {
         return $this->hasMany(OrderItem::class);
@@ -33,9 +25,5 @@ class Order extends Model
     {
         return $this->belongsTo(Address::class, 'shipping_address_id');
     }
-
-    public function payment()
-    {
-        return $this->hasOne(Payment::class);
-    }
 }
+

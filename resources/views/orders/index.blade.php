@@ -1,7 +1,7 @@
 @extends('client.layout')
 @section('title','Đơn hàng của tôi')
 @section('content')
-  <div class="max-w-5xlmax-w-7xl mx-auto p-4">
+  <div class="max-w-5xl mx-auto p-4">
     <h1 class="text-2xl font-semibold mb-4">Đơn hàng của tôi</h1>
     <div class="bg-white rounded shadow overflow-x-auto">
       <table class="min-w-full">

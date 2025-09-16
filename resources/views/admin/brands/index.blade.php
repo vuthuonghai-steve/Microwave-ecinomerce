@@ -33,6 +33,7 @@
           <td class="p-2">{{ $b->products_count }}</td>
           <td class="p-2">{{ (int) ($b->sold_qty ?? 0) }}</td>
           <td class="p-2 whitespace-nowrap">
+<<<<<<< HEAD
             <div class="inline-flex">
               {{-- Nút edit dễ thương màu hồng --}}
               @can('update',$b)
@@ -82,6 +83,18 @@
                 </form>
               @endcan
             </div>
+=======
+            @can('update', $b)
+              <a class="text-blue-600 mr-2" href="{{ route('admin.brands.edit', $b->id) }}">Edit</a>
+            @endcan
+            @can('delete', $b)
+              <form action="{{ route('admin.brands.destroy', $b->id) }}" method="post" class="inline" data-confirm="Bạn có chắc muốn xóa thương hiệu này?">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="text-red-600" aria-label="Delete brand" title="Delete">Delete</button>
+              </form>
+            @endcan
+>>>>>>> 3fedca1295f514a2ac4fdc738915c02bb0c357f7
           </td>
         </tr>
       @endforeach
